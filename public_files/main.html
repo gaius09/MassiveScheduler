@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Demo</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" href="css/bootstrap.css"/>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Demo</h1>
+            <div class="row">
+                <div class="span6">
+                    <h2>Player 1</h2>
+                    <ul>
+                        <li>ID: <span class="badge badge-success">10.000</span></li>
+                        <li>Oro: <span class="badge badge-success">10.000</span></li>
+                        <li>Ejército: <span class="badge badge-successs">158</span></li>
+                    </ul>
+                    <hr/>
+                    <form class="well form-inline" name="attack" method="post" action="">
+                        <button class="btn btn-success disabled" disabled="disabled">Atacar</button>
+                    </form>
+                    <span>Atacando</span>
+                    <div class="progress progress-success">
+                        <div class="bar"
+                             style="width: 0%;">
+                            <span class="countdowntime" data-totalTime="60" data-currentTime="28"></span>
+                        </div>
+                    </div>
+                    <form name="cancelAttack" method="post" action="">
+                        <button class="btn btn-danger pull-right">Cancelar</button>
+                    </form>
+                    <div class="clearfix"></div>
+                    <hr/>
+                    <form class="well form-inline" name="trainTroop" method="post" action="">
+                        <label>Entrenar tropas: </label>
+                        <input type="number" class="input-small">
+                        <button class="btn btn-success">Entrenar</button>    
+                    </form>
+                    <span>Entrenando tropas</span>
+                    <div class="progress progress-success progress-striped active">
+                        <div class="bar"
+                             style="width: 0%;">
+                            <span class="countdowntime" data-totalTime="30" data-currentTime="10"></span>
+                        </div>
+                    </div>
+                    <form name="cancelTroop" method="post" action="">
+                        <button class="btn btn-danger pull-right">Cancelar</button>
+                    </form>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="span6">...</div>
+            </div>
+
+
+        </div>
+        <script src="js/jquery-1.7.2.js"></script>
+        <script src="js/bootstrap.js"></script>
+        <script src="js/jquery.timer.js"></script>
+        <script>
+            function countDown(jQobject){
+                var totalTime = jQobject.attr('data-totalTime');
+                var currentTime = jQobject.attr('data-currentTime');
+                var startPercent =  100 - Math.round((currentTime * 100) / totalTime);
+                jQobject.parent().width(startPercent +'%');
+                
+                var countdownCurrent = currentTime;
+                var countdownTimer = $.timer(function() {
+                    var percent = 100 - Math.round((countdownCurrent * 100) / totalTime);
+                    var horas = parseInt(countdownCurrent / 3600);
+                    var minutos = parseInt(countdownCurrent / 60) - (horas * 60);
+                    var segundos = pad(countdownCurrent - (minutos * 60) - (horas * 3600), 2);
+                    var output = "00"; if(horas > 0) {output = pad(horas,2);}
+                    jQobject.html(output + ":" + pad(minutos, 2) + ":" + segundos);
+                    if(countdownCurrent == 0) {
+                        countdownTimer.stop();
+                    } else {
+                        countdownCurrent-=1;
+                        if(countdownCurrent < 0) {countdownCurrent = 0;}
+                    }
+                    jQobject.parent().width(percent +'%');
+                }, 1000, true);
+                
+                // Padding function
+                var pad = function (number, length) {
+                    var str = '' + number;
+                    while (str.length < length) {str = '0' + str;}
+                    return str;
+                }
+            }
+            
+            $(document).ready(function(){
+                $('.countdowntime').each(function(){
+                    countDown($(this));
+                });
+            });
+            
+            
+        </script>
+    </body>
+</html>

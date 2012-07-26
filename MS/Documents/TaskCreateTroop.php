@@ -19,7 +19,7 @@ class TaskCreateTroop extends ATask{
     }
 
     public function executeTask() {
-        echo '<br> Ejecución de TaskCreateTroop <br>';
+         echo '<br> Ejecución de TaskCreateTroop <br>';
     }
 }
 

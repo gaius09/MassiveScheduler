@@ -1,8 +1,8 @@
 <?php
 
-require_once 'loader.php';
+require_once '../loader.php';
 
-use MS\ODM,
+use MS\MongoDataManager,
     MS\Documents\ATask,
     MS\QueueTaskMessage;
 
@@ -16,23 +16,23 @@ if (isset($_REQUEST['id'])) {
 
 try {
 
-    $dm = ODM::getDocumentManager();
+    $dm = MongoDataManager::getDocumentManager();
 
+    echo "Intentando ejecutar $id \n";
     $task = $dm->find('MS\Documents\ATask', $id);
     if (isset($task)) {
-        if ($task->getTime() <= microtime(true)) {
+        if ($task->getExecutionTime() <= microtime(true)) {
             $task->executeTask();
             $dm->remove($task);
             $dm->flush();
-
-            echo 'ok';
+            echo "ok";
         } else {
-            echo 'Error: Intento de ejecución antes de tiempo';
+            echo "Error: Intento de ejecución antes de tiempo \n";
         }
     } else {
-        echo 'Error: No existe tarea con este Id';
+        echo "Error: No existe tarea con este Id \n";
     }
 } catch (Exception $exc) {
-    echo 'Error: ' . $exc->getMessage();
+    echo "Error: " . $exc->getMessage();
 }
 ?>

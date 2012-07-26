@@ -6,7 +6,7 @@ interface ITask {
 
     public function getId();
 
-    public function getTime();
+    public function getExecutionTime();
 }
 
 ?>

@@ -19,17 +19,16 @@ class TaskManager {
     }
 
     public function add(ITask $task) {
-        $q = new QueueTaskMessage($task->getId(), $task->getTime(), QueueTaskMessage::TASK_MESSAGE_ACTION_ADD);
+        $q = new QueueTaskMessage($task->getId(), $task->getExecutionTime(), QueueTaskMessage::TASK_MESSAGE_ACTION_ADD);
         $this->send($q);
-        var_dump($q);
     }
 
     public function edit(ITask $task) {
-        $this->send(new QueueTaskMessage($task->getId(), $task->getTime(), QueueTaskMessage::TASK_MESSAGE_ACTION_EDIT));
+        $this->send(new QueueTaskMessage($task->getId(), $task->getExecutionTime(), QueueTaskMessage::TASK_MESSAGE_ACTION_EDIT));
     }
 
     public function remove(ITask $task) {
-        $this->send(new QueueTaskMessage($task->getId(), $task->getTime(), QueueTaskMessage::TASK_MESSAGE_ACTION_DELETE));
+        $this->send(new QueueTaskMessage($task->getId(), $task->getExecutionTime(), QueueTaskMessage::TASK_MESSAGE_ACTION_DELETE));
     }
 
 }

@@ -8,9 +8,9 @@ use Doctrine\Common\ClassLoader,
     Doctrine\MongoDB\Connection,
     Doctrine\ODM\MongoDB\Configuration,
     Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver,
-    MS\ODM;
+    MS\MongoDataManager;
 
-class ODM {
+class MongoDataManager {
 
     private static $dm;
 
@@ -36,14 +36,14 @@ class ODM {
         AnnotationDriver::registerAnnotationClasses();
 
         $config = new Configuration();
-        $config->setProxyDir('./MS/cache');
+        $config->setProxyDir('../MS/cache');
         $config->setProxyNamespace('Proxies');
 
-        $config->setHydratorDir('./MS/cache');
+        $config->setHydratorDir('../MS/cache');
         $config->setHydratorNamespace('Hydrators');
 
         $reader = new AnnotationReader();
-        $config->setMetadataDriverImpl(new AnnotationDriver($reader, './MS/Documents'));
+        $config->setMetadataDriverImpl(new AnnotationDriver($reader, '../MS/Documents'));
         $config->setDefaultDB('massiveScheduler');
 
         self::$dm = DocumentManager::create(new Connection(), $config); //se le pasa el servidor usuario y contraseña en el objeto connection
@@ -51,8 +51,8 @@ class ODM {
 
     public static function getDocumentManager() {
         if (!isset(self::$dm)) {
-            $odm = new ODM();
-            $odm->inicializate();
+            $mdm = new MongoDataManager();
+            $mdm->inicializate();
         }
         return self::$dm;
     }

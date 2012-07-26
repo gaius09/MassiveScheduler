@@ -18,13 +18,13 @@ while (true) {
         if ($msg['action'] == 1) {
             array_push($orderedQueue, $msg);
         } elseif ($msg['action'] == 2) {
-           
+            
         } elseif ($msg['action'] == 3) {
-             deleteMessageById($orderedQueue, $msg['id']);
+            deleteMessageById($orderedQueue, $msg['id']);
         }
 
         sort($orderedQueue);
-        
+
 //        var_dump($colaOrdenada);
     }
     executeMessage($orderedQueue);
@@ -37,7 +37,7 @@ function deleteMessageById(&$colaOrdenada, $id) {
             unset($colaOrdenada[$index]);
             array_values($colaOrdenada);
             echo "Mesnsaje borrado: $id \n";
-            deleteTaskData($id);
+            executeTask($id);
             break;
         }
     }
@@ -53,17 +53,18 @@ function executeMessage(&$orderedQueue) {
             echo "Ejecutando: $id \n";
             array_shift($orderedQueue);
             array_values($orderedQueue);
-            
-            deleteTaskData($id);
+            executeTask($id);
         }
     } else {
         //echo "No existe " . '$colaOrdenada[0]'. " al ejecutar mensaje \n";
     }
 }
 
-function deleteTaskData($id){
-    $urlTask = 'http://localhost/MassiveScheduler/task.php';
-    echo http_get($urlTask . '?id=' . $id);
+function executeTask($id) {
+    $urlTask = 'http://localhost/MassiveScheduler/public_files/task.php';
+    $ch = curl_init($urlTask . '?id=' . $id);
+    curl_exec($ch);
+    curl_close($ch);
 }
 
 ?>
