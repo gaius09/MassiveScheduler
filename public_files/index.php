@@ -15,7 +15,7 @@ $message = null;
 
 var_dump($_REQUEST);
 try {
-    if (!empty($_REQUEST)) {
+    if (!empty($_POST)) {
         $player1 = $dm->find('MS\Documents\Player', $_REQUEST['player1']);
         $player2 = $dm->find('MS\Documents\Player', $_REQUEST['player2']);
         if (isset($_REQUEST['attack1'])) { // Player 1 ataca
@@ -32,6 +32,20 @@ try {
             }
         } elseif (isset($_REQUEST['cancelAttack1'])) { // Player 1 cancela ataque
             $player1->cancelAttackPlayer();
+        } elseif (isset($_REQUEST['cancelAttack2'])) { // Player 2 cancela ataque
+            $player2->cancelAttackPlayer();
+        } elseif (isset($_REQUEST['trainTroops1'])) { //Player 1 entrena tropas
+            $units = $_REQUEST['troopsNumber'];
+            $player1->buildTroops($units);
+        } elseif (isset($_REQUEST['trainTroops2'])) { //Player 2 entrena tropas
+            $units = $_REQUEST['troopsNumber'];
+            $player2->buildTroops($units);
+        } elseif (isset($_REQUEST['cancelTroop1'])) { //Player 2 entrena tropas
+            $taskId = $_REQUEST['taskTroopId'];
+            $player1->cancelBuildTroops($taskId);
+        } elseif (isset($_REQUEST['cancelTroop2'])) { //Player 2 entrena tropas
+            $taskId = $_REQUEST['taskTroopId'];
+            $player2->cancelBuildTroops($taskId);
         }
     } else {
         $players = $dm->getRepository('MS\Documents\Player')->findBy(array());
@@ -79,13 +93,14 @@ try {
                         <li>Ejército: <span class="badge badge-successs"><?php echo $player1->getArmy() ?></span></li>
                     </ul>
                     <hr/>
-                    <form class="well form-inline" name="form1" method="post" action="index.php">
+                    <form class="well" name="form1" method="post" action="index.php">
                         <input type="hidden" name="player1" value="<?php echo $player1->getId(); ?>"/>
                         <input type="hidden" name="player2" value="<?php echo $player2->getId(); ?>"/>
                         <?php if (!$player1->isAttacking()): ?>
                             <input class="btn btn-success" type="submit" name="attack1" value="Atacar"/>               
                         <?php else: ?>
                             <input class="btn btn-success" type="submit" name="attack1" value="Atacar" disabled="disabled"/>
+                            <br/>
                             <span>Atacando</span>
                             <div class="progress progress-success">
                                 <div class="bar"
@@ -99,26 +114,36 @@ try {
                             <input class="btn btn-danger pull-right" type="submit" name="cancelAttack1" value="Cancelar"/>
                             <div class="clearfix"></div>
                         <?php endif; ?>
-                        <hr/>
-                        <!--
-                        <form class="well form-inline" name="trainTroop" method="post" action="">
-                            <label>Entrenar tropas: </label>
-                            <input type="number" class="input-small">
-                            <button class="btn btn-success">Entrenar</button>    
-                        </form>
-                        <span>Entrenando tropas</span>
-                        <div class="progress progress-success progress-striped active">
-                            <div class="bar"
-                                 style="width: 0%;">
-                                <span class="countdowntime" data-totalTime="30" data-currentTime="10"></span>
-                            </div>
-                        </div>
-                        <form name="cancelTroop" method="post" action="">
-                            <button class="btn btn-danger pull-right">Cancelar</button>
-                        </form>
-                        <div class="clearfix"></div>
-                        -->
                     </form>
+                    <form class="well form-inline" name="" method="post" action="index.php">
+                        <input type="hidden" name="player1" value="<?php echo $player1->getId(); ?>"/>
+                        <input type="hidden" name="player2" value="<?php echo $player2->getId(); ?>"/>
+                        <div>
+                            <label>Entrenar tropas: </label>
+                            <input type="text" class="input-small" name="troopsNumber">
+                            <input class="btn btn-success" type="submit" name="trainTroops1" value="Entrenar"/>
+                        </div>
+                    </form>
+                    <?php foreach ($player1->getTaskCreateTroopCollection() as $taskCT): ?>
+                        <form class="well" name="" method="post" action="index.php">
+                            <input type="hidden" name="player1" value="<?php echo $player1->getId(); ?>"/>
+                            <input type="hidden" name="player2" value="<?php echo $player2->getId(); ?>"/>
+                             <span class="help-block">Entrenando <?php echo $taskCT->getUnits() ?> tropas...</span>
+                            <div class="progress progress-success progress-striped active">
+                                <div class="bar"
+                                     style="width: 0%;">
+                                    <span class="countdowntime" 
+                                          data-totalTime="<?php echo round($taskCT->getDuration()) ?>" 
+                                          data-currentTime="<?php echo round($taskCT->getRemainingTime()) ?>">
+                                    </span>
+                                </div>
+                            </div>
+                            <input class="btn btn-danger pull-right" type="submit" name="cancelTroop1" value="Cancelar"/>
+                            <input type="hidden" name="taskTroopId" value="<?php echo $taskCT->getId() ?>"/>
+                            <div class="clearfix"></div>  
+                        </form>
+                    <?php endforeach; ?>
+
                 </div>
                 <div class="span6">...</div>
             </div>

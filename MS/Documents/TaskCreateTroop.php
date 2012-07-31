@@ -8,19 +8,32 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
 /**
  * @ODM\Document
  */
-class TaskCreateTroop extends ATask{
-    
-    /** @ODM\Int */
-    private $units;
+class TaskCreateTroop extends ATask {
 
-    function __construct($executionTime, $units) {
-        parent::__construct($executionTime);
+    /** @ODM\Int */
+    protected $units;
+
+    /**  @ODM\ReferenceOne(targetDocument="Player", inversedBy="taskCreateTroopCollection") */
+    protected $player;
+
+    function __construct($duration, $player, $units) {
+        parent::__construct($duration);
+        $this->player = $player;
         $this->units = $units;
     }
 
-    public function executeTask() {
-         echo '<br> Ejecución de TaskCreateTroop <br>';
+    public function getUnits() {
+        return $this->units;
     }
+
+    public function getPlayer() {
+        return $this->player;
+    }
+
+    public function executeTask() {
+        $this->player->setArmy($this->player->getArmy() + $this->units);
+    }
+
 }
 
 ?>

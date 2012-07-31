@@ -5,27 +5,27 @@ $key = 987654;
 $ipc = msg_get_queue($key);
 $msg = null;
 $tipoMensaje = null;
-$urlTask = 'http://localhost/MassiveScheduler/task.php';
 
-echo "Ejecutando... \n";
+echo "DAEMON: Ejecutando... \n";
 
 while (true) {
     usleep(10000);
     while (msg_receive($ipc, 0, $tipoMensaje, 512 * 1024, $msg, TRUE, MSG_IPC_NOWAIT)) {
-        echo "Mensaje recibido \n";
+        echo "DAEMON: Mensaje recibido \n";
 //        var_dump($message);
 
-        if ($msg['action'] == 1) {
+        if ($msg['action'] == 1) { //Add
+            echo "==DAEMON: " . $msg['id'] . " TIME:" . date("H:i:s", $msg['time']) . " \n";
+
             array_push($orderedQueue, $msg);
-        } elseif ($msg['action'] == 2) {
-            
-        } elseif ($msg['action'] == 3) {
+        } elseif ($msg['action'] == 2) { //Edit
+        } elseif ($msg['action'] == 3) { //Delete
             deleteMessageById($orderedQueue, $msg['id']);
         }
 
         sort($orderedQueue);
 
-//        var_dump($colaOrdenada);
+//      var_dump($orderedQueue);
     }
     executeMessage($orderedQueue);
 }
@@ -36,8 +36,8 @@ function deleteMessageById(&$colaOrdenada, $id) {
         if ($qMsg['id'] == $id) {
             unset($colaOrdenada[$index]);
             array_values($colaOrdenada);
-            echo "Mesnsaje borrado: $id \n";
-            executeTask($id);
+            echo "DAEMON: Mesnsaje borrado: $id \n";
+            //executeTask($id);
             break;
         }
     }
@@ -50,7 +50,7 @@ function executeMessage(&$orderedQueue) {
         $now = microtime(true);
         if ($taskTime <= $now) {
             $id = $msg['id'];
-            echo "Ejecutando: $id \n";
+            echo "DAEMON: Ejecutando: $id \n";
             array_shift($orderedQueue);
             array_values($orderedQueue);
             executeTask($id);
@@ -61,10 +61,12 @@ function executeMessage(&$orderedQueue) {
 }
 
 function executeTask($id) {
+    echo "DAEMON: Mando petición...\n";
     $urlTask = 'http://localhost/MassiveScheduler/public_files/task.php';
     $ch = curl_init($urlTask . '?id=' . $id);
     curl_exec($ch);
     curl_close($ch);
+    echo "DAEMON: cURL cerrado \n";
 }
 
 ?>

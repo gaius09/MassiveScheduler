@@ -18,21 +18,22 @@ try {
 
     $dm = MongoDataManager::getDocumentManager();
 
-    echo "Intentando ejecutar $id \n";
+    echo "TASK: Intentando ejecutar $id \n";
     $task = $dm->find('MS\Documents\ATask', $id);
     if (isset($task)) {
         if ($task->getExecutionTime() <= microtime(true)) {
             $task->executeTask();
+            echo "==TASK: " . $task->getId() . " executed at: " . date("H:i:s", microtime(true)) . " \n";
             $dm->remove($task);
             $dm->flush();
-            echo "ok";
+            echo "TASK: ok\n";
         } else {
-            echo "Error: Intento de ejecución antes de tiempo \n";
+            echo "TASK: Error: Intento de ejecución antes de tiempo \n";
         }
     } else {
-        echo "Error: No existe tarea con este Id \n";
+        echo "TASK: Error: No existe tarea con este Id \n";
     }
 } catch (Exception $exc) {
-    echo "Error: " . $exc->getMessage();
+    echo "TASK. Error: " . $exc->getMessage();
 }
 ?>

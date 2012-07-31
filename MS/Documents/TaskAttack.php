@@ -4,7 +4,6 @@ namespace MS\Documents;
 
 use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
     MS\Documents\ATask,
-    MS\MongoDataManager,
     MS\Documents\Battle;
 
 /**
@@ -12,7 +11,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
  */
 class TaskAttack extends ATask {
 
-    /**  @ODM\ReferenceOne(targetDocument="Player") */
+    /**  @ODM\ReferenceOne(targetDocument="Player", inversedBy="taskAttack") */
     protected $attacker;
 
     /**  @ODM\ReferenceOne(targetDocument="Player") */
@@ -27,7 +26,6 @@ class TaskAttack extends ATask {
     public function executeTask() {
         $battle = new Battle($this->attacker, $this->defender);
         $battle->fight();
-        $this->attacker->setTaskAttack(null);
     }
 
 }
