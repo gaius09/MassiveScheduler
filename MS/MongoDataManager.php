@@ -36,14 +36,14 @@ class MongoDataManager {
         AnnotationDriver::registerAnnotationClasses();
 
         $config = new Configuration();
-        $config->setProxyDir('../MS/cache');
+        $config->setProxyDir( __DIR__.'/../MS/cache');
         $config->setProxyNamespace('Proxies');
 
-        $config->setHydratorDir('../MS/cache');
+        $config->setHydratorDir( __DIR__.'/../MS/cache');
         $config->setHydratorNamespace('Hydrators');
 
         $reader = new AnnotationReader();
-        $config->setMetadataDriverImpl(new AnnotationDriver($reader, '../MS/Documents'));
+        $config->setMetadataDriverImpl(new AnnotationDriver($reader,  __DIR__.'/../MS/Documents'));
         $config->setDefaultDB('massiveScheduler');
 
         self::$dm = DocumentManager::create(new Connection(), $config); //se le pasa el servidor usuario y contraseña en el objeto connection

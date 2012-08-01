@@ -11,7 +11,7 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
  */
 class Player {
 
-    const GOLD_PER_MINUTE = 10;
+    const GOLD_PER_SECOND = 2;
     const TROOP_PRICE = 2;
     const TIME_PER_TROOP = 5;
     const MAX_CREATE_TROOP_QUEUE = 5;
@@ -43,6 +43,7 @@ class Player {
     function __construct($army, $gold) {
         $this->army = $army;
         $this->gold = $gold;
+        $this->goldTime = microtime(true);
         $this->taskCreateTroopCollection = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
