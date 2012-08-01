@@ -32,8 +32,8 @@ class QueueTaskMessage {
     
     public function toArray(){
         return array(
-            'id' => $this->id,
             'time' => $this->time,
+            'id' => $this->id,
             'action' => $this->action
         );
     }

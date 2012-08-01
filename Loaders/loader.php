@@ -1,5 +1,5 @@
 <?php
-require_once (__DIR__.'/lib/vendor/Symfony/Component/ClassLoader/UniversalClassLoader.php');
+require_once (__DIR__.'/../lib/vendor/Symfony/Component/ClassLoader/UniversalClassLoader.php');
 
 use Symfony\Component\ClassLoader\UniversalClassLoader;
 
@@ -9,5 +9,6 @@ $loader->registerNamespace('Doctrine\ODM\MongoDB', '../lib/vendor/doctrine-mongo
 $loader->registerNamespace('Doctrine\Common', '../lib/vendor/doctrine-common/lib');
 $loader->registerNamespace('Doctrine\MongoDB', '../lib/vendor/doctrine-mongodb/lib');
 $loader->registerNamespace('MS', '../');
+$loader->registerNamespace('Daemon', '../');
 $loader->register();
 ?>
