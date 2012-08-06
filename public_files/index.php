@@ -175,7 +175,7 @@ try {
                                     </span>
                                 </div>
                             </div>
-                            <input class="btn btn-danger pull-right" type="submit" name="cancelAttack1" value="Cancelar"/>
+                            <input class="btn btn-danger pull-right" type="submit" name="cancelAttack2" value="Cancelar"/>
                             <div class="clearfix"></div>
                         <?php endif; ?>
 
