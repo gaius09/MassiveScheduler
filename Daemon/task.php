@@ -55,7 +55,7 @@ class TaskRunner {
 /*
  * MODO LINEA DE COMANDOS
  */
-var_dump($_SERVER["argv"]);
+//var_dump($_SERVER["argv"]);
 if ($argc != 2) {
     echo "Se debe pasar un solo argumento... \n";
 } else {

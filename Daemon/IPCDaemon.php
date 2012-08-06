@@ -2,19 +2,12 @@
 
 <?php
 
-//namespace Daemon;
-
-//require_once __DIR__ . '/../Loaders/loader.php';
-
-//use MS\MongoDataManager;
-//use MS\Documents\ATask;
-
 class IPCDaemon {
 
     const ACTION_ADD = 1;
     const ACTION_EDIT = 2;
     const ACTION_DELETE = 3;
-    const TASK_COMMAND_PATH = 'php /home/alfonso/public_html/MassiveScheduler/Daemon/task.php';
+    const TASK_COMMAND_PATH = 'php /home/ebf/public_html/MassiveScheduler/Daemon/task.php';
 
     private $orderedQueue;
     private $key;
@@ -87,38 +80,6 @@ class IPCDaemon {
     }
 
     private function executeTask($id) {
-
-//        try {
-//
-//            $dm = MongoDataManager::getDocumentManager();
-//
-////            echo "Intentando ejecutar tarea: $id \n";
-//            $task = $dm->find('MS\Documents\ATask', $id);
-//            if (isset($task)) {
-//                if ($task->getExecutionTime() <= microtime(true)) {
-//                    $task->executeTask();
-////                    echo "==> TASK: " . $task->getId() . " executed at: " . date("H:i:s", microtime(true)) . " \n";
-//                    $dm->remove($task);
-//                    $dm->flush();
-//                    echo "==> Tarea con id $id ejecutada y eliminada de BD a las " . date("H:i:s", microtime(true)) . " \n";
-//                } else {
-//                    echo "==> TASK: Error: Intento de ejecución antes de tiempo \n";
-//                }
-//            } else {
-//                echo "Error: No existe tarea en base de datos con Id: $id \n";
-//            }
-//        } catch (Exception $exc) {
-//            echo "TASK. Error: " . $exc->getMessage();
-//        }
-
-        // Con curl
-//        echo "DAEMON: Mando petición...\n";
-//        $urlTask = 'http://localhost/MassiveScheduler/public_files/task.php';
-//        $ch = curl_init($urlTask . '?id=' . $id);
-//        curl_exec($ch);
-//        curl_close($ch);
-//        echo "DAEMON: cURL cerrado \n";
-        
         system(IPCDaemon::TASK_COMMAND_PATH . " $id");
     }
 

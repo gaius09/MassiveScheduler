@@ -1,0 +1,23 @@
+
+ul.resourceList{
+    list-style: none;
+}
+ul.resourceList li{
+    height: 32px;
+    padding: 8px 0 0 40px;
+}
+ul.resourceList li.resourceGold{
+    background: url(../img/money.png) no-repeat;
+}
+ul.resourceList li.resourceArmy{
+    background: url(../img/sword.gif) no-repeat;
+}
+ul.resourceList li span{
+    font-size: 1.5em;
+    font-family: Georgia, serif;
+}
+
+input[type="text"]{
+    height: auto;
+}
+

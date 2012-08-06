@@ -11,8 +11,8 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
  */
 class Player {
 
-    const GOLD_PER_SECOND = 2;
-    const TROOP_PRICE = 2;
+    const GOLD_PER_SECOND = 0.25;
+    const TROOP_PRICE = 10;
     const TIME_PER_TROOP = 5;
     const MAX_CREATE_TROOP_QUEUE = 5;
     const MAX_UNITS_CREATE_TROOP = 100;
@@ -47,6 +47,10 @@ class Player {
         $this->taskCreateTroopCollection = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
+    private function recalculateGold() {
+        $this->gold += intval((microtime(true) - $this->goldTime) * Player::GOLD_PER_SECOND);
+    }
+
     public function getId() {
         return $this->id;
     }
@@ -56,6 +60,9 @@ class Player {
     }
 
     public function getGold() {
+        $this->recalculateGold();
+        $dm = MongoDataManager::getDocumentManager();
+        $dm->flush();
         return $this->gold;
     }
 
@@ -101,14 +108,18 @@ class Player {
     }
 
     public function buildTroops($number) {
-        if (count($this->taskCreateTroopCollection) < Player::MAX_CREATE_TROOP_QUEUE) {
+        $cost = $number * Player::TROOP_PRICE;
+        if ($cost > $this->getGold()) {
+            throw new \Exception('No tienes suficiente oro...');
+        } elseif (count($this->taskCreateTroopCollection) < Player::MAX_CREATE_TROOP_QUEUE) {
             if ($number > Player::MAX_UNITS_CREATE_TROOP) {
                 throw new \Exception("No puedes crear más de Player::MAX_UNITS_CREATE_TROOP a la vez");
             } else {
                 $dm = MongoDataManager::getDocumentManager();
+                $this->gold -= $cost;
                 $task = new TaskCreateTroop(Player::TIME_PER_TROOP * $number, $this, $number);
                 $this->taskCreateTroopCollection->add($task);
-                $dm->persist($this);
+//                $dm->persist($this);
                 $dm->flush();
                 $taskManager = new TaskManager();
                 $taskManager->add($task);
@@ -124,6 +135,8 @@ class Player {
         if (!isset($task)) {
             throw new \Exception('No se encontró la tarea a cancelar');
         } else {
+            $this->gold += $task->getUnits() * Player::TROOP_PRICE;
+
             $taskManager = new TaskManager();
             $taskManager->remove($task);
             $dm->remove($task);

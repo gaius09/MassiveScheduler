@@ -40,10 +40,10 @@ try {
         } elseif (isset($_REQUEST['trainTroops2'])) { //Player 2 entrena tropas
             $units = $_REQUEST['troopsNumber'];
             $player2->buildTroops($units);
-        } elseif (isset($_REQUEST['cancelTroop1'])) { //Player 2 entrena tropas
+        } elseif (isset($_REQUEST['cancelTroop1'])) { //Player 1 cancela tropas
             $taskId = $_REQUEST['taskTroopId'];
             $player1->cancelBuildTroops($taskId);
-        } elseif (isset($_REQUEST['cancelTroop2'])) { //Player 2 entrena tropas
+        } elseif (isset($_REQUEST['cancelTroop2'])) { //Player 2 cancela tropas
             $taskId = $_REQUEST['taskTroopId'];
             $player2->cancelBuildTroops($taskId);
         }
@@ -64,7 +64,7 @@ try {
         }
     }
 } catch (Exception $exc) {
-    $message = $exc->getTraceAsString();
+    $message = $exc->getMessage();
 }
 ?>
 
@@ -74,6 +74,7 @@ try {
         <title>Demo</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" href="css/bootstrap.css"/>
+        <link rel="stylesheet" href="css/style.css"/>
     </head>
     <body>
         <div class="container">
@@ -87,22 +88,21 @@ try {
             <div class="row">
                 <div class="span6">
                     <h2>Player 1</h2>
-                    <ul>
-                        <li>ID: <span class="badge badge-success"><?php echo $player1->getId(); ?></span></li>
-                        <li>Oro: <span class="badge badge-success"><?php echo $player1->getGold() ?></span></li>
-                        <li>Ejército: <span class="badge badge-successs"><?php echo $player1->getArmy() ?></span></li>
+                    <ul class="resourceList">
+                        <li class="resourceGold"><span><?php echo $player1->getGold() ?></span></li>
+                        <li class="resourceArmy"><span><?php echo $player1->getArmy() ?></span></li>
                     </ul>
                     <hr/>
                     <form class="well" name="form1" method="post" action="index.php">
                         <input type="hidden" name="player1" value="<?php echo $player1->getId(); ?>"/>
                         <input type="hidden" name="player2" value="<?php echo $player2->getId(); ?>"/>
                         <?php if (!$player1->isAttacking()): ?>
-                            <input class="btn btn-success" type="submit" name="attack1" value="Atacar"/>               
+                            <input class="btn btn-primary btn-large" type="submit" name="attack1" value="Atacar"/>               
                         <?php else: ?>
-                            <input class="btn btn-success" type="submit" name="attack1" value="Atacar" disabled="disabled"/>
+                            <input class="btn btn-primary btn-large" type="submit" name="attack1" value="Atacar" disabled="disabled"/>
                             <br/>
                             <span>Atacando</span>
-                            <div class="progress progress-success">
+                            <div class="progress">
                                 <div class="bar"
                                      style="width: 0%;">
                                     <span class="countdowntime" 
@@ -114,38 +114,106 @@ try {
                             <input class="btn btn-danger pull-right" type="submit" name="cancelAttack1" value="Cancelar"/>
                             <div class="clearfix"></div>
                         <?php endif; ?>
+
                     </form>
-                    <form class="well form-inline" name="" method="post" action="index.php">
-                        <input type="hidden" name="player1" value="<?php echo $player1->getId(); ?>"/>
-                        <input type="hidden" name="player2" value="<?php echo $player2->getId(); ?>"/>
-                        <div>
-                            <label>Entrenar tropas: </label>
-                            <input type="text" class="input-small" name="troopsNumber">
-                            <input class="btn btn-success" type="submit" name="trainTroops1" value="Entrenar"/>
-                        </div>
-                    </form>
-                    <?php foreach ($player1->getTaskCreateTroopCollection() as $taskCT): ?>
-                        <form class="well" name="" method="post" action="index.php">
+                    <div class="well">
+                        <form class="form-inline" name="" method="post" action="index.php">
                             <input type="hidden" name="player1" value="<?php echo $player1->getId(); ?>"/>
                             <input type="hidden" name="player2" value="<?php echo $player2->getId(); ?>"/>
-                             <span class="help-block">Entrenando <?php echo $taskCT->getUnits() ?> tropas...</span>
-                            <div class="progress progress-success progress-striped active">
+                            <div>
+                                <div>Coste por tropa: <span class="badge"><?php echo Player::TROOP_PRICE ?></span></div>
+                                <br/>
+                                <label>Entrenar tropas: </label>
+                                <input type="text" class="input-small" name="troopsNumber">
+                                <input class="btn" type="submit" name="trainTroops1" value="Entrenar"/>
+                            </div>
+                        </form>
+
+                        <?php foreach ($player1->getTaskCreateTroopCollection() as $taskCT): ?>
+                            <form class="" name="" method="post" action="index.php">
+                                <input type="hidden" name="player1" value="<?php echo $player1->getId(); ?>"/>
+                                <input type="hidden" name="player2" value="<?php echo $player2->getId(); ?>"/>
+                                <span class="help-block">Entrenando <?php echo $taskCT->getUnits() ?> tropas...</span>
+                                <div class="progress progress-success progress-striped active">
+                                    <div class="bar"
+                                         style="width: 0%;">
+                                        <span class="countdowntime" 
+                                              data-totalTime="<?php echo round($taskCT->getDuration()) ?>" 
+                                              data-currentTime="<?php echo round($taskCT->getRemainingTime()) ?>">
+                                        </span>
+                                    </div>
+                                </div>
+                                <input class="btn btn-danger pull-right" type="submit" name="cancelTroop1" value="Cancelar"/>
+                                <input type="hidden" name="taskTroopId" value="<?php echo $taskCT->getId() ?>"/>
+                                <div class="clearfix"></div>  
+                            </form>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <div class="span6">
+                    <h2>Player 2</h2>
+                    <ul class="resourceList">
+                        <li class="resourceGold"><span><?php echo $player2->getGold() ?></span></li>
+                        <li class="resourceArmy"><span><?php echo $player2->getArmy() ?></span></li>
+                    </ul>
+                    <hr/>
+                    <form class="well" name="form1" method="post" action="index.php">
+                        <input type="hidden" name="player1" value="<?php echo $player1->getId(); ?>"/>
+                        <input type="hidden" name="player2" value="<?php echo $player2->getId(); ?>"/>
+                        <?php if (!$player2->isAttacking()): ?>
+                            <input class="btn btn-primary btn-large" type="submit" name="attack2" value="Atacar"/>               
+                        <?php else: ?>
+                            <input class="btn btn-primary btn-large" type="submit" name="attack2" value="Atacar" disabled="disabled"/>
+                            <br/>
+                            <span>Atacando</span>
+                            <div class="progress">
                                 <div class="bar"
                                      style="width: 0%;">
                                     <span class="countdowntime" 
-                                          data-totalTime="<?php echo round($taskCT->getDuration()) ?>" 
-                                          data-currentTime="<?php echo round($taskCT->getRemainingTime()) ?>">
+                                          data-totalTime="<?php echo round($player2->getTaskAttack()->getDuration()) ?>" 
+                                          data-currentTime="<?php echo round($player2->getTaskAttack()->getRemainingTime()) ?>">
                                     </span>
                                 </div>
                             </div>
-                            <input class="btn btn-danger pull-right" type="submit" name="cancelTroop1" value="Cancelar"/>
-                            <input type="hidden" name="taskTroopId" value="<?php echo $taskCT->getId() ?>"/>
-                            <div class="clearfix"></div>  
-                        </form>
-                    <?php endforeach; ?>
+                            <input class="btn btn-danger pull-right" type="submit" name="cancelAttack1" value="Cancelar"/>
+                            <div class="clearfix"></div>
+                        <?php endif; ?>
 
+                    </form>
+                    <div class="well">
+                        <form class="form-inline" name="" method="post" action="index.php">
+                            <input type="hidden" name="player1" value="<?php echo $player1->getId(); ?>"/>
+                            <input type="hidden" name="player2" value="<?php echo $player2->getId(); ?>"/>
+                            <div>
+                                <div>Coste por tropa: <span class="badge"><?php echo Player::TROOP_PRICE ?></span></div>
+                                <br/>
+                                <label>Entrenar tropas: </label>
+                                <input type="text" class="input-small" name="troopsNumber">
+                                <input class="btn" type="submit" name="trainTroops2" value="Entrenar"/>
+                            </div>
+                        </form>
+
+                        <?php foreach ($player2->getTaskCreateTroopCollection() as $taskCT): ?>
+                            <form class="" name="" method="post" action="index.php">
+                                <input type="hidden" name="player1" value="<?php echo $player1->getId(); ?>"/>
+                                <input type="hidden" name="player2" value="<?php echo $player2->getId(); ?>"/>
+                                <span class="help-block">Entrenando <?php echo $taskCT->getUnits() ?> tropas...</span>
+                                <div class="progress progress-success progress-striped active">
+                                    <div class="bar"
+                                         style="width: 0%;">
+                                        <span class="countdowntime" 
+                                              data-totalTime="<?php echo round($taskCT->getDuration()) ?>" 
+                                              data-currentTime="<?php echo round($taskCT->getRemainingTime()) ?>">
+                                        </span>
+                                    </div>
+                                </div>
+                                <input class="btn btn-danger pull-right" type="submit" name="cancelTroop2" value="Cancelar"/>
+                                <input type="hidden" name="taskTroopId" value="<?php echo $taskCT->getId() ?>"/>
+                                <div class="clearfix"></div>  
+                            </form>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
-                <div class="span6">...</div>
             </div>
 
 
