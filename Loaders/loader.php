@@ -11,4 +11,5 @@ $loader->registerNamespace('Doctrine\MongoDB', __DIR__.'/../lib/vendor/doctrine-
 $loader->registerNamespace('MS', __DIR__.'/../');
 $loader->registerNamespace('Daemon', __DIR__.'/../');
 $loader->register();
+
 ?>
