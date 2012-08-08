@@ -13,7 +13,7 @@ $player1 = null;
 $player2 = null;
 $message = null;
 
-var_dump($_REQUEST);
+//var_dump($_REQUEST);
 try {
     if (!empty($_POST)) {
         $player1 = $dm->find('MS\Documents\Player', $_REQUEST['player1']);
@@ -89,7 +89,7 @@ try {
                 <div class="span6">
                     <h2>Player 1</h2>
                     <ul class="resourceList">
-                        <li class="resourceGold"><span><?php echo $player1->getGold() ?></span></li>
+                        <li class="resourceGold"><span><?php echo number_format($player1->getGold(), 0, '', '.') ?></span></li>
                         <li class="resourceArmy"><span><?php echo $player1->getArmy() ?></span></li>
                     </ul>
                     <hr/>
@@ -153,7 +153,7 @@ try {
                 <div class="span6">
                     <h2>Player 2</h2>
                     <ul class="resourceList">
-                        <li class="resourceGold"><span><?php echo $player2->getGold() ?></span></li>
+                        <li class="resourceGold"><span><?php echo number_format($player2->getGold(), 0, '', '.') ?></span></li>
                         <li class="resourceArmy"><span><?php echo $player2->getArmy() ?></span></li>
                     </ul>
                     <hr/>
@@ -239,7 +239,7 @@ try {
                     jQobject.html(output + ":" + pad(minutos, 2) + ":" + segundos);
                     if(countdownCurrent == 0) {
                         countdownTimer.stop();
-                        //window.location.reload(false); 
+                        //                        window.location. 
                     } else {
                         countdownCurrent-=1;
                         if(countdownCurrent < 0) {countdownCurrent = 0;}
@@ -260,7 +260,6 @@ try {
                     countDown($(this));
                 });
             });
-            
             
         </script>
     </body>

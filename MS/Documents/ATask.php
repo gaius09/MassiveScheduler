@@ -12,8 +12,9 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM,
  * @ODM\DiscriminatorField(fieldName="type")
  * @ODM\DiscriminatorMap({
   "attack"="TaskAttack",
-  "createTroop"="TaskCreateTroop"
-  })
+  "createTroop"="TaskCreateTroop",
+  "test"="TaskTest"
+   })
  */
 abstract class ATask implements ITask {
 
